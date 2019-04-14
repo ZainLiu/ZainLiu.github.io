@@ -17,7 +17,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<title>redis集群搭建 | lzyBlog</title>
+	<title>python&&django连接redis sentinel集群（哨兵模式） | lzyBlog</title>
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -47,14 +47,14 @@
 
 	<meta property="og:site_name" content="lzyBlog">
 	<meta property="og:type" content="article">
-	<meta property="og:title" content="redis集群搭建 | lzyBlog">
+	<meta property="og:title" content="python&&django连接redis sentinel集群（哨兵模式） | lzyBlog">
 	<meta property="og:description" content>
-	<meta property="og:url" content="https://blog.lzyblog.club/2019/04/09/redis集群搭建/">
+	<meta property="og:url" content="https://blog.lzyblog.club/2019/12/31/python连接redis sentinel集群（哨兵模式）/">
 
 	
-	<meta property="article:published_time" content="2019-04-09T00:04:00+08:00"> 
+	<meta property="article:published_time" content="2019-12-31T00:12:00+08:00"> 
 	<meta property="article:author" content="lzy">
-	<meta property="article:published_first" content="lzyBlog, /2019/04/09/redis集群搭建/">
+	<meta property="article:published_first" content="lzyBlog, /2019/12/31/python连接redis sentinel集群（哨兵模式）/">
 	
 </head>
 <body class="post-template">
@@ -133,60 +133,64 @@
     <div class="inner">
         <header class="post-full-header">
             <section class="post-full-meta">
-                <time class="post-full-meta-date" datetime="2019-04-08T16:00:00.000Z" itemprop="datePublished">
-                    2019-04-9
+                <time class="post-full-meta-date" datetime="2019-12-30T16:00:00.000Z" itemprop="datePublished">
+                    2019-12-31
                 </time>
                 
                 <span class="date-divider">/</span>
                 
                 
             </section>
-            <h1 class="post-full-title">redis集群搭建</h1>
+            <h1 class="post-full-title">python&&django连接redis sentinel集群（哨兵模式）</h1>
         </header>
         <article class="post-full no-image">
             
             <section class="post-full-content">
                 <div id="lightgallery" class="markdown-body">
-                    <h2 id="redis集群搭建"><a href="#redis集群搭建" class="headerlink" title="redis集群搭建"></a>redis集群搭建</h2><h6 id="集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。"><a href="#集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。" class="headerlink" title="集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。"></a>集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。</h6><h6 id="redis数据库准备："><a href="#redis数据库准备：" class="headerlink" title="redis数据库准备："></a>redis数据库准备：</h6><blockquote>
-<p>创建文件目录conf/7000.conf(有多少个服务器就键几个，ps:可以在不同机器上创建，主要区别是port、bing（真实主机IP）、pidfile、cluster-config-file)</p>
+                    <h2 id="python-连接redis-sentinel"><a href="#python-连接redis-sentinel" class="headerlink" title="python 连接redis sentinel"></a>python 连接redis sentinel</h2><blockquote>
+<p>相关依赖包</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 7000</span><br><span class="line">bind 172.16.179.130</span><br><span class="line">daemonize yes</span><br><span class="line">pidfile 7000.pid</span><br><span class="line">cluster-enabled yes</span><br><span class="line">cluster-config-file 7000_node.conf</span><br><span class="line">cluster-node-timeout 15000</span><br><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="keyword">from</span> redis.sentinel <span class="keyword">import</span> Sentinel</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>启动：redis-server 7000.conf（有几个就启动几个）</p>
+<p>连接哨兵服务器(主机名也可以用域名)</p>
 </blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sentinel = Sentinel([(<span class="string">'172.31.0.2'</span>, <span class="number">5001</span>),</span><br><span class="line">(<span class="string">'172.31.0.3'</span>, <span class="number">5001</span>),</span><br><span class="line">(<span class="string">'172.31.0.4'</span>, <span class="number">5001</span>),</span><br><span class="line">(<span class="string">'172.31.0.5'</span>, <span class="number">5001</span>)</span><br><span class="line">],</span><br><span class="line">socket_timeout=<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>查看进程是否启动：ps -ef | grep redis</p>
+<p>获取主服务器地址</p>
 </blockquote>
-<h6 id="创建集群"><a href="#创建集群" class="headerlink" title="创建集群"></a>创建集群</h6><ol>
-<li><p>redis的安装包中包含了redis-trib.rb，⽤于创建集群</p>
-</li>
-<li><p>接下来的操作在172.16.179.130（可以在集群内的任一机器上执行）机器上进⾏</p>
-</li>
-<li><p>将命令复制，这样可以在任何⽬录下调⽤此命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /usr/share/doc/redis-tools/examples/redis-trib.rb /usr/local/bin/</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装ruby环境，因为redis-trib.rb是⽤ruby开发的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ruby</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>运⾏如下命令创建集群（包含所有创建集群的redis程序）ps：集群会从参与集群的redis程序中选取不少于一半的程序作为主服务器（少于的话整个集群无法提供服务）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-trib.rb create --replicas 1 172.16.179.130:7000 172.16.179.130:7001 172.16.179.130:7002 172.16.179.131:7003 172.16.179.131:7004 172.16.179.131:7005集群是</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h6 id="数据怎么决定存在哪个redis上（CRC16）"><a href="#数据怎么决定存在哪个redis上（CRC16）" class="headerlink" title="数据怎么决定存在哪个redis上（CRC16）"></a>数据怎么决定存在哪个redis上（CRC16）</h6><p>理解关键点：</p>
-<ul>
-<li>去中心化、去中间件 负载均衡</li>
-<li>哈希槽（hash slot）分配、默认16384个槽（solt）、具体算法CRC16(key) % 16384 如果有n个redis master，每个redis master均分16384个槽，而且是连续的</li>
-<li>Redis 集群会把数据存在⼀个 master 节点，然后在这个 master 和其对应的salve 之间进⾏数据同步。当读取数据时，也根据⼀致性哈希算法到对应的 master 节 点获取数据。只有当⼀个master 挂掉之后，才会启动⼀个对应的 salve 节点，充 当 master</li>
-<li>需要注意的是：必须要3个或以上的主节点，否则在创建集群时会失败，并且当存 活的主节点数⼩于总节点数的⼀半时，整个集群就⽆法提供服务了</li>
-</ul>
-<h6 id="redis-cluster与python交互"><a href="#redis-cluster与python交互" class="headerlink" title="redis cluster与python交互"></a>redis cluster与python交互</h6><ol>
-<li><p>安装依赖包</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install redis-py-cluster</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接示例</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rediscluster <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># 构建所有的节点，Redis会使⽤CRC16算法，将键和值写到某个节点上(连接的是集群里面的master节点)</span></span><br><span class="line">    startup_nodes = [</span><br><span class="line">        &#123;<span class="string">'host'</span>: <span class="string">'192.168.26.128'</span>, <span class="string">'port'</span>: <span class="string">'7000'</span>&#125;,</span><br><span class="line">        &#123;<span class="string">'host'</span>: <span class="string">'192.168.26.130'</span>, <span class="string">'port'</span>: <span class="string">'7003'</span>&#125;,</span><br><span class="line">        &#123;<span class="string">'host'</span>: <span class="string">'192.168.26.128'</span>, <span class="string">'port'</span>: <span class="string">'7001'</span>&#125;,</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment"># 构建StrictRedisCluster对象                   	  	src=StrictRedisCluster(startup_nodes=startup_nodes,decode_responses=True)</span></span><br><span class="line">    <span class="comment"># 设置键为name、值为itheima的数据</span></span><br><span class="line">    result=src.set(<span class="string">'name'</span>,<span class="string">'itheima'</span>)</span><br><span class="line">    print(result)</span><br><span class="line">    <span class="comment"># 获取键为name</span></span><br><span class="line">    name = src.get(<span class="string">'name'</span>)</span><br><span class="line">    print(name)</span><br><span class="line">  <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">master = sentinel.discover_master(<span class="string">'mymaster'</span>)</span><br><span class="line">print(master)</span><br><span class="line"><span class="comment"># 输出：('172.31.0.2', 5001)</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>获取从服务器地址</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">slave = sentinel.discover_slaves(<span class="string">'mymaster'</span>)</span><br><span class="line">print(slave)</span><br><span class="line"><span class="comment"># 输出：[('172.31.3', 5001), ('172.31.0.4', 5001), ('172.31.0.5', 5001)]</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>获取主服务器进行写入</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">master = sentinel.master_for(<span class="string">'mymaster'</span>, socket_timeout=<span class="number">0.5</span>, password=<span class="string">'redis_auth_pass'</span>, db=<span class="number">15</span>)</span><br><span class="line">w_ret = master.set(<span class="string">'foo'</span>, <span class="string">'bar'</span>)</span><br><span class="line"><span class="comment"># 输出：True</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>获取从服务器进行读取（默认是round-roubin）</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">slave = sentinel.slave_for(<span class="string">'mymaster'</span>, socket_timeout=<span class="number">0.5</span>, password=<span class="string">'redis_auth_pass'</span>, db=<span class="number">15</span>)</span><br><span class="line">r_ret = slave.get(<span class="string">'foo'</span>)</span><br><span class="line">print(r_ret)</span><br><span class="line"><span class="comment"># 输出：bar</span></span><br></pre></td></tr></table></figure>
+<h2 id="django连接redis-sentinel"><a href="#django连接redis-sentinel" class="headerlink" title="django连接redis sentinel"></a>django连接redis sentinel</h2><h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><blockquote>
+<p>依赖包</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install django-redis-sentinel</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>配置信息</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CACHES = &#123;</span><br><span class="line">        <span class="string">"default"</span>: &#123;</span><br><span class="line">            <span class="string">"BACKEND"</span>: <span class="string">"django_redis.cache.RedisCache"</span>,</span><br><span class="line">            <span class="string">"LOCATION"</span>: <span class="string">"redis_master/sentinel-host1:2639,sentinel-host2:2639/0"</span></span><br><span class="line">            <span class="string">"OPTIONS"</span>: &#123;</span><br><span class="line">                <span class="string">"PASSWORD"</span>: <span class="string">'s3cret_passw0rd!'</span>,</span><br><span class="line">                <span class="string">"CLIENT_CLASS"</span>: <span class="string">"django_redis_sentinel.SentinelClient"</span>,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>配置例子</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">"default"</span>: &#123;</span><br><span class="line">        <span class="string">"BACKEND"</span>: <span class="string">"django_redis.cache.RedisCache"</span>,</span><br><span class="line">        <span class="string">"LOCATION"</span>: [</span><br><span class="line">            <span class="string">"redis://127.0.0.1:6379?db=1"</span>,</span><br><span class="line">            <span class="string">"redis://127.0.0.1:6379?db=1"</span>,</span><br><span class="line">        ],</span><br><span class="line">        <span class="string">"OPTIONS"</span>: &#123;</span><br><span class="line">            <span class="string">"CLIENT_CLASS"</span>: <span class="string">"django_redis_sentinel.SentinelClient"</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="方法二（HA（high、available）：高可用版）"><a href="#方法二（HA（high、available）：高可用版）" class="headerlink" title="方法二（HA（high、available）：高可用版）"></a>方法二（HA（high、available）：高可用版）</h3><blockquote>
+<p>依赖包(依赖方法一的包)</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install django-redis-sentinel</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>配置</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">"default"</span>: &#123;</span><br><span class="line">        <span class="string">"BACKEND"</span>: <span class="string">"django_redis_sentinel.cache.RedisSentinelCache"</span>,</span><br><span class="line">        <span class="string">"LOCATION"</span>: [</span><br><span class="line">            (<span class="string">"sentinel1"</span>, <span class="number">26379</span>),  <span class="comment"># 必须元组</span></span><br><span class="line">            (<span class="string">"sentinel2"</span>, <span class="number">26379</span>),</span><br><span class="line">            (<span class="string">"sentinel3"</span>, <span class="number">26379</span>)</span><br><span class="line">        ],</span><br><span class="line">        <span class="string">"OPTIONS"</span>: &#123;</span><br><span class="line">            <span class="string">"CLIENT_CLASS"</span>: <span class="string">"django_redis_sentinel.client.SentinelClient"</span>,</span><br><span class="line">            <span class="string">"SENTINEL_SERVICE_NAME"</span>: <span class="string">"rmaster"</span>,</span><br><span class="line">            <span class="string">"REDIS_CLIENT_KWARGS"</span>: &#123;</span><br><span class="line">                <span class="string">"db"</span>: <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
                 </div>
             </section>
@@ -197,14 +201,10 @@
     <div style="height: 4vw;width: 100%"></div>
     <nav id="gobottom" class="pagination">
         
-        <a class="prev-post" title="Note" href="/2019/04/13/课堂笔记/">
-            ← Note
-        </a>
-        
         <span class="prev-next-post">•</span>
         
-        <a class="next-post" title="mysql的主从同步&&读写分离 （Django）" href="/2018/11/30/mysql主从&读写分离/">
-            mysql的主从同步&&读写分离 （Django） →
+        <a class="next-post" title="Note" href="/2019/04/13/课堂笔记/">
+            Note →
         </a>
         
     </nav>
@@ -230,7 +230,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#redis集群搭建"><span class="toc-text">redis集群搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。"><span class="toc-text">集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#redis数据库准备："><span class="toc-text">redis数据库准备：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#创建集群"><span class="toc-text">创建集群</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#数据怎么决定存在哪个redis上（CRC16）"><span class="toc-text">数据怎么决定存在哪个redis上（CRC16）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#redis-cluster与python交互"><span class="toc-text">redis cluster与python交互</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#python-连接redis-sentinel"><span class="toc-text">python 连接redis sentinel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#django连接redis-sentinel"><span class="toc-text">django连接redis sentinel</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法一"><span class="toc-text">方法一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法二（HA（high、available）：高可用版）"><span class="toc-text">方法二（HA（high、available）：高可用版）</span></a></li></ol></li></ol>
     </div>
 </div>
 
@@ -362,7 +362,7 @@
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">redis集群搭建</div>
+    <div class="floating-header-title">python&&django连接redis sentinel集群（哨兵模式）</div>
     <progress class="progress" value="0">
         <div class="progress-container">
             <span class="progress-bar"></span>
