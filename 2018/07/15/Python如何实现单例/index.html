@@ -17,7 +17,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<title>redis集群搭建 | lzyBlog</title>
+	<title>python如何实现单例 | lzyBlog</title>
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -47,14 +47,14 @@
 
 	<meta property="og:site_name" content="lzyBlog">
 	<meta property="og:type" content="article">
-	<meta property="og:title" content="redis集群搭建 | lzyBlog">
+	<meta property="og:title" content="python如何实现单例 | lzyBlog">
 	<meta property="og:description" content>
-	<meta property="og:url" content="https://blog.lzyblog.club/2019/04/09/redis集群搭建/">
+	<meta property="og:url" content="https://blog.lzyblog.club/2018/07/15/Python如何实现单例/">
 
 	
-	<meta property="article:published_time" content="2019-04-09T00:04:00+08:00"> 
+	<meta property="article:published_time" content="2018-07-15T00:07:00+08:00"> 
 	<meta property="article:author" content="lzy">
-	<meta property="article:published_first" content="lzyBlog, /2019/04/09/redis集群搭建/">
+	<meta property="article:published_first" content="lzyBlog, /2018/07/15/Python如何实现单例/">
 	
 </head>
 <body class="post-template">
@@ -129,60 +129,31 @@
     <div class="inner">
         <header class="post-full-header">
             <section class="post-full-meta">
-                <time class="post-full-meta-date" datetime="2019-04-08T16:00:00.000Z" itemprop="datePublished">
-                    2019-04-9
+                <time class="post-full-meta-date" datetime="2018-07-14T16:00:00.000Z" itemprop="datePublished">
+                    2018-07-15
                 </time>
                 
                 <span class="date-divider">/</span>
                 
                 
             </section>
-            <h1 class="post-full-title">redis集群搭建</h1>
+            <h1 class="post-full-title">python如何实现单例</h1>
         </header>
         <article class="post-full no-image">
             
             <section class="post-full-content">
                 <div id="lightgallery" class="markdown-body">
-                    <h2 id="redis集群搭建"><a href="#redis集群搭建" class="headerlink" title="redis集群搭建"></a>redis集群搭建</h2><h6 id="集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。"><a href="#集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。" class="headerlink" title="集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。"></a>集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。</h6><h6 id="redis数据库准备："><a href="#redis数据库准备：" class="headerlink" title="redis数据库准备："></a>redis数据库准备：</h6><blockquote>
-<p>创建文件目录conf/7000.conf(有多少个服务器就键几个，ps:可以在不同机器上创建，主要区别是port、bing（真实主机IP）、pidfile、cluster-config-file)</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 7000</span><br><span class="line">bind 172.16.179.130</span><br><span class="line">daemonize yes</span><br><span class="line">pidfile 7000.pid</span><br><span class="line">cluster-enabled yes</span><br><span class="line">cluster-config-file 7000_node.conf</span><br><span class="line">cluster-node-timeout 15000</span><br><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>启动：redis-server 7000.conf（有几个就启动几个）</p>
-</blockquote>
-<blockquote>
-<p>查看进程是否启动：ps -ef | grep redis</p>
-</blockquote>
-<h6 id="创建集群"><a href="#创建集群" class="headerlink" title="创建集群"></a>创建集群</h6><ol>
-<li><p>redis的安装包中包含了redis-trib.rb，⽤于创建集群</p>
-</li>
-<li><p>接下来的操作在172.16.179.130（可以在集群内的任一机器上执行）机器上进⾏</p>
-</li>
-<li><p>将命令复制，这样可以在任何⽬录下调⽤此命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /usr/share/doc/redis-tools/examples/redis-trib.rb /usr/local/bin/</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装ruby环境，因为redis-trib.rb是⽤ruby开发的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ruby</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>运⾏如下命令创建集群（包含所有创建集群的redis程序）ps：集群会从参与集群的redis程序中选取不少于一半的程序作为主服务器（少于的话整个集群无法提供服务）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-trib.rb create --replicas 1 172.16.179.130:7000 172.16.179.130:7001 172.16.179.130:7002 172.16.179.131:7003 172.16.179.131:7004 172.16.179.131:7005集群是</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h6 id="数据怎么决定存在哪个redis上（CRC16）"><a href="#数据怎么决定存在哪个redis上（CRC16）" class="headerlink" title="数据怎么决定存在哪个redis上（CRC16）"></a>数据怎么决定存在哪个redis上（CRC16）</h6><p>理解关键点：</p>
-<ul>
-<li>去中心化、去中间件 负载均衡</li>
-<li>哈希槽（hash slot）分配、默认16384个槽（solt）、具体算法CRC16(key) % 16384 如果有n个redis master，每个redis master均分16384个槽，而且是连续的</li>
-<li>Redis 集群会把数据存在⼀个 master 节点，然后在这个 master 和其对应的salve 之间进⾏数据同步。当读取数据时，也根据⼀致性哈希算法到对应的 master 节 点获取数据。只有当⼀个master 挂掉之后，才会启动⼀个对应的 salve 节点，充 当 master</li>
-<li>需要注意的是：必须要3个或以上的主节点，否则在创建集群时会失败，并且当存 活的主节点数⼩于总节点数的⼀半时，整个集群就⽆法提供服务了</li>
-</ul>
-<h6 id="redis-cluster与python交互"><a href="#redis-cluster与python交互" class="headerlink" title="redis cluster与python交互"></a>redis cluster与python交互</h6><ol>
-<li><p>安装依赖包</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install redis-py-cluster</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接示例</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rediscluster <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># 构建所有的节点，Redis会使⽤CRC16算法，将键和值写到某个节点上(连接的是集群里面的master节点)</span></span><br><span class="line">    startup_nodes = [</span><br><span class="line">        &#123;<span class="string">'host'</span>: <span class="string">'192.168.26.128'</span>, <span class="string">'port'</span>: <span class="string">'7000'</span>&#125;,</span><br><span class="line">        &#123;<span class="string">'host'</span>: <span class="string">'192.168.26.130'</span>, <span class="string">'port'</span>: <span class="string">'7003'</span>&#125;,</span><br><span class="line">        &#123;<span class="string">'host'</span>: <span class="string">'192.168.26.128'</span>, <span class="string">'port'</span>: <span class="string">'7001'</span>&#125;,</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment"># 构建StrictRedisCluster对象                   	  	src=StrictRedisCluster(startup_nodes=startup_nodes,decode_responses=True)</span></span><br><span class="line">    <span class="comment"># 设置键为name、值为itheima的数据</span></span><br><span class="line">    result=src.set(<span class="string">'name'</span>,<span class="string">'itheima'</span>)</span><br><span class="line">    print(result)</span><br><span class="line">    <span class="comment"># 获取键为name</span></span><br><span class="line">    name = src.get(<span class="string">'name'</span>)</span><br><span class="line">    print(name)</span><br><span class="line">  <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    print(e)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
+                    <p>使用模块：其实，Python的模块就是天然的单例模式，因为模块在第一次导入时，会生成.pyc 文件，当第二次导入时，就会直接加载.pyc文件，而不会再次执行模块代码。因此我们只需把相关的函数和数据定义在一个模块中，就可以获得一个单例对象了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mysingle.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySingle</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">sinleton = MySingle()</span><br><span class="line"><span class="comment">#将上面的代码保存在文件mysingle.py中，然后这样使用：</span></span><br><span class="line"><span class="keyword">from</span> mysingle <span class="keyword">import</span> sinleton</span><br><span class="line">singleton.foo()</span><br></pre></td></tr></table></figure>
+<p>使用__new__：为了使类只能出现一个实例，我们可以使用__new__来控制实例的创建过程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实例化一个单例</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span><span class="params">(object)</span>:</span></span><br><span class="line">    __instance = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__new__</span><span class="params">(cls, age, name)</span>:</span></span><br><span class="line">        <span class="comment">#如果类属性__instance的值为None，</span></span><br><span class="line">        <span class="comment">#那么就创建一个对象，并且赋值为这个对象的引用，保证下次调用这个方法时</span></span><br><span class="line">        <span class="comment">#能够知道之前已经创建过对象了，这样就保证了只有1个对象</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cls.__instance:</span><br><span class="line">            cls.__instance = object.__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls.__instance</span><br></pre></td></tr></table></figure>
+<p>使用装饰器：装饰器可以动态的修改一个类或函数的功能。这里，我们也可以使用装饰器来装饰某个类，使其只能生成一个实例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">singleton</span><span class="params">(cls)</span>:</span></span><br><span class="line">	instances = &#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">getinstance</span><span class="params">(*args,**kwargs)</span>:</span></span><br><span class="line">		<span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instances:</span><br><span class="line">			instances[cls] = cls(*args,**kwargs)</span><br><span class="line">		<span class="keyword">return</span> instances[cls]</span><br><span class="line">	<span class="keyword">return</span> getinstance </span><br><span class="line"><span class="meta">@singleton</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span>:</span></span><br><span class="line">	a = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>使用metaclass（元类）：元类可以控制类的创建过程，它主要做三件事：</p>
+<p>—拦截类的创建</p>
+<p>—修改类的定义</p>
+<p>—返回修改后的类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton2</span><span class="params">(type)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">		self.__instance = <span class="literal">None</span></span><br><span class="line">		super(Singleton2,self).__init__(*args, **kwargs)</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">		<span class="keyword">if</span> self.__instance <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">			self.__instance =super(Singleton2,self).__call__(*args, **kwargs)</span><br><span class="line">		<span class="keyword">return</span> self.__instance</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span><span class="params">(object)</span>:</span></span><br><span class="line">	__metaclass__ = Singleton2</span><br><span class="line"><span class="comment">#在代码执行到这里的时候，元类中的__new__方法和__init__方法其实已经被执行了，而 不是在Foo实例化的时候执行。且仅会执行一次。</span></span><br><span class="line">foo1 = Foo()</span><br><span class="line">foo2 = Foo()</span><br><span class="line"><span class="keyword">print</span> (Foo.__dict__) </span><br><span class="line"><span class="comment">#_Singleton__instance': &lt;__main__.Foo object at 0x100c52f10&gt; 存在一个私有属性来保存属性， 而不会污染Foo类（其实还是会污染，只是无法直接通过__instance属性访问）</span></span><br><span class="line"><span class="keyword">print</span> (foo1 <span class="keyword">is</span> foo2) <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
 
                 </div>
             </section>
@@ -193,14 +164,14 @@
     <div style="height: 4vw;width: 100%"></div>
     <nav id="gobottom" class="pagination">
         
-        <a class="prev-post" title="python&&django连接redis sentinel集群（哨兵模式）" href="/2019/12/31/python连接redis sentinel集群（哨兵模式）/">
-            ← python&&django连接redis sentinel集群（哨兵模式）
+        <a class="prev-post" title="主从、哨兵、集群区别" href="/2018/11/28/主从、哨兵、集群区别/">
+            ← 主从、哨兵、集群区别
         </a>
         
         <span class="prev-next-post">•</span>
         
-        <a class="next-post" title="mysql的主从同步&&读写分离 （Django）" href="/2018/11/30/mysql主从&读写分离/">
-            mysql的主从同步&&读写分离 （Django） →
+        <a class="next-post" title="微信支付（python)" href="/2018/03/20/微信支付（python）/">
+            微信支付（python) →
         </a>
         
     </nav>
@@ -226,7 +197,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#redis集群搭建"><span class="toc-text">redis集群搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。"><span class="toc-text">集群的概念：集群是一组相互独立的、通过高速网络互联的计算机，它们构成了一个组，并以单一系统的模式加以管理。</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#redis数据库准备："><span class="toc-text">redis数据库准备：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#创建集群"><span class="toc-text">创建集群</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#数据怎么决定存在哪个redis上（CRC16）"><span class="toc-text">数据怎么决定存在哪个redis上（CRC16）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#redis-cluster与python交互"><span class="toc-text">redis cluster与python交互</span></a></li></ol></li></ol>
+        
     </div>
 </div>
 
@@ -366,7 +337,7 @@
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">redis集群搭建</div>
+    <div class="floating-header-title">python如何实现单例</div>
     <progress class="progress" value="0">
         <div class="progress-container">
             <span class="progress-bar"></span>
